@@ -1,0 +1,45 @@
+{#{% extends 'base.html.twig' %}#}
+
+{% block header %}
+    <div id="header">
+        <div class="container">
+            <div id="logoArea" class="navbar">
+                <div id="welcomeLine" class="row">
+                    <div class="span6">Welcome!<strong> {{ app.user.username }}</strong></div>
+                </div>
+                <a id="smallScreen" data-target="#topMenu" data-toggle="collapse" class="btn btn-navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <div class="navbar-inner">
+                    <form class="form-inline navbar-search" method="post" action="{{ path('default') }}">
+                        <select id="categorylist" style="float: right;" name="categorylist" onchange="self.location= '/shopping-cart/category/' + this.options[this.selectedIndex].text;">
+                            <option value="">Search by category</option>
+                            {% for categoryList in categories %}
+                                <option value="{{ categoryList.id }}">{{ categoryList.name }}</option>
+                            {% endfor %}
+                        </select> &nbsp;&nbsp;
+                        <select id="brandlist" style="float: right;" name="brandlist" onchange="self.location='/shopping-cart/brand/' + this.options[this.selectedIndex].text;">
+                            <option value="">Search by brand</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}">{{ brand.name }}</option>
+                            {% endfor %}
+                        </select> &nbsp;
+                        <button type="submit" id="submitButton" class="btn btn-primary">All Products</button> &nbsp;
+                        {% set cartProduct = 0 %}
+                        {% set cartQuantity = 0 %}
+                        {%  for orders in cart %}
+                            {% set cartProduct = cartProduct + 1 %}
+                            {% set cartQuantity = orders.quantity + cartQuantity %}
+                        {% endfor %}
+                        <a href="{{path('addtocart')}}"><span class="btn btn-mini btn-primary">{% if cartProduct == 0 %} Empty Cart {% else %} {{ cartProduct }} Products in your cart {% endif %}</span> </a> &nbsp;
+
+                        <a href="{{ path('app_logout') }}" class="btn btn-mini btn-primary" style="text-decoration: none"><span>Logout</span></a>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+
+{% block search %}
+    <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+        <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+    </form>
+{% endblock  %}
+
+{% block category %}
+    <select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+            {% if category.parent is null %}
+                <option value="{{ category.name }}">{{ category.detailName }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+{% endblock %}
+
+{% block products %}
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Electronics
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Electronics' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Electronics' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Books
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Books' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Books' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endblock %}
+
+{% block body %}
+<div class="ads-grid py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+    <div class="product-sec1 px-sm-4 px-3 py-sm-5  py-3 mb-4">
+    <div class="row">
+{#            <div class="txt-heading">Products</div>#}
+            {% for value in data %}
+                {% if categoryAll %}
+                {% for category in categoryAll %}
+                    {% if (category.name == value.category.name) %}
+                        <div class="col-md-4 product-men mt-5">
+            <div class="men-pro-item simpleCart_shelfItem">
+                <div class="men-thumb-item text-center">
+                    <img src="{{ asset('images/') }}{{ value.name }}" style="height:200px; width: inherit"  alt="">
+                    <div class="men-cart-pro">
+                        <div class="inner-men-cart-pro">
+                            <a href="{{ path('detail',{'id':value.id}) }}" class="link-product-add-cart">Quick View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-info-product text-center border-top mt-4">
+                    <h4 class="pt-1">
+                        <a href="{{ path('detail',{'id':value.id}) }}">{{ value.description }}</a>
+                    </h4>
+                    <div class="info-product-price my-2">
+                        <span class="item_price">Rs.{{ value.price }}</span>
+{#                        <del>Rs.{{ product.price + 1500 }}</del>#}
+                    </div>
+                    <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                        <form action="{{ path('addtocart') }}" method="post" name="product">
+                            <input type="text" hidden name="productId" value="{{ value.id }}" >
+                            <input type="number" style="width: 40%; font-size:.875rem; margin-bottom: 2px" class="product-quantity" name="quantity"
+                                    {% for availableQty in soldoutcheck %}
+                                        {% if value.id is same as(availableQty.id) %}
+                                            {% if availableQty.totalQty + value.maxQtyPerUserPerCart > value.availavleQty%}
+                                                max="{{ value.availavleQty - availableQty.totalQty }}"
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                   max="{{ value.maxQtyPerUserPerCart }}" value="1" />
+                            <input id="addToCart" type="submit"
+                                    {% for availableQty in soldoutcheck %}
+                                        {% if value.id is same as(availableQty.id) %}
+                                            {% if availableQty.totalQty == value.availavleQty %} value="Sold out" disabled {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                   value="Add to cart" class="button btn" style="float: inherit"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+                    {% endif %}
+                {% endfor %}
+                {% else %}
+                    <div class="col-md-4 product-men mt-5">
+                        <div class="men-pro-item simpleCart_shelfItem">
+                            <div class="men-thumb-item text-center">
+                                <img src="{{ asset('images/') }}{{ value.name }}" style="height:210px" alt="">
+                                <div class="men-cart-pro">
+                                    <div class="inner-men-cart-pro">
+                                        <a href="{{ path('detail',{'id':value.id}) }}" class="link-product-add-cart">Quick View</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-info-product text-center border-top mt-4">
+                                <h4 class="pt-1">
+                                    <a href="{{ path('detail',{'id':value.id}) }}">{{ value.description }}</a>
+                                </h4>
+                                <div class="info-product-price my-2">
+                                    <span class="item_price">Rs.{{ value.price }}</span>
+                                    {#                        <del>Rs.{{ product.price + 1500 }}</del>#}
+                                </div>
+                                <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                                    <form action="{{ path('addtocart') }}" method="post" name="product">
+                                        <input type="text" hidden name="productId" value="{{ value.id }}" >
+                                        <input type="number" style="width: 40%; font-size:.875rem; margin-bottom: 2px" class="product-quantity" name="quantity"
+                                                {% for availableQty in soldoutcheck %}
+                                                    {% if value.id is same as(availableQty.id) %}
+                                                        {% if availableQty.totalQty + value.maxQtyPerUserPerCart > value.availavleQty%}
+                                                            max="{{ value.availavleQty - availableQty.totalQty }}"
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                               max="{{ value.maxQtyPerUserPerCart }}" value="1" />
+                                        <input id="addToCart" type="submit"
+                                                {% for availableQty in soldoutcheck %}
+                                                    {% if value.id is same as(availableQty.id) %}
+                                                        {% if availableQty.totalQty == value.availavleQty %} value="Sold out" disabled {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                               value="Add to cart" class="button btn" style="float: inherit"/>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block pages %}
+    <div class="dropdown-menu">
+        {% for page in pages %}
+            <a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

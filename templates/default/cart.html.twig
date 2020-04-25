@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+
+{#{% block title %}Shopping Cart{% endblock %}#}
+{#{% block header %}#}
+{#    {% include 'header.html.twig' %}#}
+{#{% endblock %}#}
+
+{% block search %}
+    <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+        <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+    </form>
+{% endblock  %}
+
+{% block category %}
+    <select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+            {% if category.parent is null %}
+                <option value="{{ category.name }}">{{ category.detailName }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+{% endblock %}
+
+{% block products %}
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Electronics
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Electronics' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Electronics' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Books
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Books' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Books' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endblock %}
+
+{% block body %}
+
+<div class="ads-grid py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+        <div class="txt-heading">Shopping Cart</div>
+        <div style="margin-top: 40px">
+        <table id="cart" class="tbl-cart" cellpadding="10" cellspacing="1">
+            <tbody>
+            <tr>
+                <th colspan="2" style="text-align:left;">Name</th>
+                <th style="text-align:right;" width="10%">Quantity</th>
+                <th style="text-align:right;" width="10%">Unit Price</th>
+                <th style="text-align:right;" width="10%">Price</th>
+                <th style="text-align:center;" width="5%">Remove</th>
+            </tr>
+            {% set cartPrice = 0 %}
+            {% set cartQuantity = 0 %}
+            {% if cart is empty %}
+                <td colspan="6" style="text-align: center"> Empty Cart</td>
+            {% else %}
+            {% for cartValue in cart %}
+                <tr>
+                    <td width="1%">
+                        <a href="{{ path('detail',{'id': cartValue.productId.id}) }}">
+                            <img src="{{ asset('images/') }}{{ cartValue.productId.name }}" alt="productImage" class="cart-item-image" />
+                        </a>
+                    </td>
+                    <td id="name" style="text-align:right; font-size: medium"> {{ cartValue.productId.description }}</td>
+                    <td  style="text-align:right;" width="20%" >
+                        <form name="cart" action="{{ path('addtocart') }}" method="POST">
+                            <input type="hidden" name="productId" value="{{ cartValue.productId.id }}">
+                            <input type="hidden" name="orderId" value="{{ cartValue.id }}">
+                            <input type="number" name="qty" min="0"
+                                    {% for availableQty in soldoutcheck %}
+                                        {% if cartValue.productId.id is same as(availableQty.id) %}
+                                            {% if availableQty.totalQty == cartValue.productId.availavleQty %}
+                                                max="{{ cartValue.quantity }}"
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                   max="{{ cartValue.productId.maxQtyPerUserPerCart }}"
+                                class="product-quantity" style="width: 60px;" value="{{ cartValue.quantity }}" />
+                            <input type="submit" id="update"
+                                {% for availableQty in soldoutcheck %}
+                                    {% if cartValue.productId.id is same as(availableQty.id) %}
+                                    {% if availableQty.totalQty == cartValue.productId.availavleQty and cartValue.quantity == 1 %}
+                                        disabled
+                                    {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                   value="Update"
+                                   class="btn btn-secondary" />
+{#                            <input type="number" name="qty" min="0"#}
+{#                                   {% if cartValue.productId.availavleQty < cartValue.productId.maxQtyPerUserPerCart %} max="{{ cartValue.productId.availavleQty }}" {% endif %} max="{{ cartValue.productId.maxQtyPerUserPerCart }}" class="product-quantity" style="width: 60px;" value="{{ cartValue.quantity }}" />#}
+{#                            <input type="submit" id="update" value="Update" class="btn btn-secondary" />#}
+                        </form>
+                    </td>
+                    <td  style="text-align:right;">{{ cartValue.productId.price }}</td>
+                    <td  style="text-align:right;">{{ cartValue.quantity * cartValue.productId.price }}</td>
+                    <td style="text-align:center;"><a href="{{ path('remove', {'id' : cartValue.id }) }}" class="btnRemoveAction"> <img src="{{ asset('images/icon-delete.png') }}" alt="Remove Item"></a></td>
+                </tr>
+                {% set cartPrice = cartValue.quantity * cartValue.productId.price + cartPrice %}
+                {% set cartQuantity = cartValue.quantity + cartQuantity %}
+            {% endfor %}
+            <tr>
+                <td colspan="3" style="text-align:right;">
+                    <label>Total Quantity = </label>
+                    {{ cartQuantity }} units
+                </td>
+                <td colspan="2" style="text-align:right;">
+                    <label>Total Price =&nbsp;</label>
+                    Rs. {{ cartPrice }}
+                </td>
+                <td></td>
+            </tr>
+            {% endif %}
+            </tbody>
+        </table>
+        </div>
+        <div style="float: right">
+            <a href="{{ path('checkout') }}" class="btn btn-lg btn-primary">Checkout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block pages %}
+    <div class="dropdown-menu">
+        {% for page in pages %}
+            <a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block  javascripts %}
+    {{ parent() }}
+    <script id="ajax">
+        $(document).ready(function () {
+            $('#update').on('click', function () {
+                $.ajax({
+                    url: '{{ (path('addtocart')) }}',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        qty : cart.qty,
+                        productId : cart.productId,
+                        orderId : cart.orderId,
+                    },
+                    success: function (response) {
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+

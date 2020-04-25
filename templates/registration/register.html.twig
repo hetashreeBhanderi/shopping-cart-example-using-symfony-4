@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+    <h1 class="h3 mb-3 font-weight-normal">Please sign up as new user</h1>
+
+    {{ form_start(registrationForm) }}
+    <table>
+        <tr>
+            <td>
+                {{ form_label(registrationForm.username) }}
+            </td>
+            <td>
+                {{ form_widget(registrationForm.username,{'attr':{'class':'form-control', 'autofocus':'true'}}) }}
+            </td>
+            <td>
+                {{ form_errors(registrationForm.username) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(registrationForm.password.first) }}
+            </td>
+            <td>
+                {{ form_widget(registrationForm.password.first, {'attr':{'class':'form-control'}}) }}
+            </td>
+            <td>
+                {{ form_errors(registrationForm.password.first) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form_label(registrationForm.password.second) }}
+            </td>
+            <td>
+                {{ form_widget(registrationForm.password.second, {'attr':{'class':'form-control'}}) }}
+            </td>
+            <td>
+                {{ form_errors(registrationForm.password.second) }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                {{ form_row(registrationForm.agreeTerms) }}
+            </td>
+            <td>
+                {{ form_errors(registrationForm.agreeTerms) }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;&nbsp;{{ form_widget(registrationForm.submit,{'attr': {'class' : 'btn btn-lg btn-primary'}}) }}
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+    {{ form_end(registrationForm) }}
+{% endblock %}

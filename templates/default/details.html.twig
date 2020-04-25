@@ -1,0 +1,201 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Product Details {% endblock %}
+{#{% block header %}#}
+{#    {% include 'header.html.twig' %}#}
+{#{% endblock %}#}
+
+{% block search %}
+    <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+        <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+    </form>
+{% endblock  %}
+
+{% block category %}
+    <select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+            {% if category.parent is null %}
+                <option value="{{ category.name }}">{{ category.detailName }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+{% endblock %}
+
+{% block products %}
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Electronics
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Electronics' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Electronics' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Books
+        </a>
+        <div class="dropdown-menu">
+            <div class="agile_inner_drop_nav_info p-4">
+                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+                <div class="row">
+                    <div class="col-sm-6 multi-gd-img">
+                        <ul class="multi-column-dropdown">
+                            {% for electronic in electronics %}
+                                {% if electronic.parent.name == 'Books' %}
+                                    <li>
+                                        <a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+                                    </li>
+                                {% elseif electronic.parent.parent is not null %}
+                                    {% if electronic.parent.parent.name == 'Books' %}
+                                        <li class="elename">
+                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <div style="border: #E0E0E0 1px solid; width: 350px; height: auto; margin-left: 2%; margin-top: 2%;">
+        <div style="margin-left: 2%; margin-top: 2%; margin-bottom: 2%">
+            <form name="productDetailForm" action="{{ path('addtocart') }}" method="post">
+                <img src="{{ asset('images/') }}{{ product.name }}" height="240" width="240"> <br>
+                {{ product.description }} <br>
+                {% if product.brand is not null %} Brand is {{ product.brand.name }}. <br> {% endif %}
+                Price Rs. {{ product.price }} <br>
+                <input type="hidden" value="{{ product.id }}" name="productId">
+                <input type="number" style="width: 20%; font-size: .875rem; margin-right: 10px" class="product-quantity" name="quantity" min="0"
+                {% for availableQty in soldoutcheck %}
+                    {% if product.id is same as(availableQty.id) %}
+                        {% if availableQty.totalQty + product.maxQtyPerUserPerCart > product.availavleQty%}
+                            max="{{ product.availavleQty - availableQty.totalQty }}"
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                    max="{{ product.maxQtyPerUserPerCart }}" 
+                value="1"/>
+                <input id="addToCart" type="submit"
+                {% for availableQty in soldoutcheck %}
+                    {% if product.id is same as(availableQty.id) %}
+                        {% if availableQty.totalQty == product.availavleQty %} value="Sold out" disabled {% endif %}
+                    {% endif %}
+                {% endfor %}
+                    value="Add to cart" class="btn btn-sm btn-primary" style="padding-top: .40rem; font-size: .900rem; margin-right: 10px"/>
+                <a href="{{ path('default') }}" class="btn btn-sm btn-primary" style="padding-top: .40rem; font-size: .900rem;">Back</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="a-section askDetailPageSearchWidgetSection" style="margin-left: 2%">
+        <div class="a-section a-spacing-extra-large">
+            <h2 class="a-spacing-micro">
+                Have a question?
+            </h2>
+            <p>
+                Please write down your questions here...
+            </p>
+                <div>
+                    {{ form_start(questionForm) }}
+                        <div >
+                            <table style="width: 50%">
+                                {% if app.user is null %}
+                                    <div style="color: red">
+                                        Please login first!
+                                    </div>
+                                    <tr>
+                                        <td>
+                                            {{ form_widget(questionForm.questionTitle,{'attr':{'disabled':true}}) }}
+                                        </td>
+                                        <td>
+                                            {{ form_widget(questionForm.submit,{'attr':{'class':'btn btn-sm btn-primary','disabled':true}}) }}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td>
+                                            {{ form_widget(questionForm.questionTitle) }}
+                                        </td>
+                                        <td>
+                                            {{ form_widget(questionForm.submit,{'attr':{'class':'btn btn-sm btn-primary'}}) }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    {{ form_end(questionForm) }}
+                </div>
+            <div>
+                {% if questionList is not empty %}
+                    {% for questions in questionList %}
+                        <div class="answerGrid">
+                            <form name="questionAnswer" action="{{ path('answer',{'id':questions.id}) }}" class="questionAnswer" method="post">
+                                <table>
+                                    <tr>
+                                        <td> Question : </td>
+                                        <td> &nbsp; &nbsp;  </td>
+                                        <td> {{ questions.questionTitle }} </td>
+                                    </tr>
+                                            {% for answers in answerList %}
+                                            {% if answers.question.id is same as(questions.id) %}
+                                    <tr>
+                                        <td>
+                                            Answer :
+                                        </td>
+                                        <td> &nbsp; &nbsp; </td>
+                                        <td>
+                                            {{ answers.answer }}
+                                        </td>
+                                    </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                    <tr>
+                                       <td colspan="2">
+                                           <input id="ans" type="submit" class="btn btn-sm btn-primary" value="Answer">
+                                       </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pages %}
+    <div class="dropdown-menu">
+        {% for page in pages %}
+            <a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{
+    "editor.acceptSuggestionOnEnter": "smart",
+    "symfony-vscode.shellCommand": "true",
+    "symfony-vscode.shellExecutable": "true",
+    "symfony-vscode.showAsseticRoutes": true,
+    "php.suggest.basic": false
+}
