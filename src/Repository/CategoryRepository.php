@@ -30,7 +30,7 @@ class CategoryRepository extends ServiceEntityRepository
             ->where('p.id = c.parent')
             ->getQuery()
             ->getResult()
-        ;
+            ;
     }
 
 

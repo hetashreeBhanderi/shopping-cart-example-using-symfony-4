@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
+use App\Entity\Page;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\LoginAuthenticator;
@@ -40,9 +42,17 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
 
         }
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
         ]);
     }
 }

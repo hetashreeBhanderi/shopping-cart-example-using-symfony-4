@@ -180,6 +180,9 @@
             "./config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "symfony/annotations-pack": {
+        "version": "v1.0.0"
+    },
     "symfony/asset": {
         "version": "v5.0.5"
     },

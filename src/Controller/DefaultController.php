@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\Answers;
 use App\Entity\Brand;
 use App\Entity\Category;
+use App\Entity\Checker;
 use App\Entity\HomepageSiteSettings;
 use App\Entity\Orders;
 use App\Entity\Page;
@@ -15,7 +16,6 @@ use App\Entity\User;
 use App\Form\AddressType;
 use App\Form\AnswerType;
 use App\Form\QuestionType;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -225,6 +225,7 @@ class DefaultController extends AbstractController
                 $order->setQuantity($quantity);
                 $order->setProductId($orderData);
                 $order->setUserId($user);
+
 //                $orderData->setAvailavleQty($orderData->getAvailavleQty() - $quantity);
 
                 $em->persist($order);
@@ -326,7 +327,6 @@ class DefaultController extends AbstractController
 
         if($questionForm->isSubmitted() && $questionForm->isValid())
         {
-//            $userId = $user->getId();
 
             $question->setUser($user);
             $question->setProduct($product);
@@ -336,7 +336,6 @@ class DefaultController extends AbstractController
             return $this->redirectToRoute("detail",array('id'=>$productId));
         }
 
-//        $cart = $em->getRepository(Orders::class)->findBy(['userId' => $userId]);
         $brands = $em->getRepository(Brand::class)->findAll();
 
         $soldOutCheck = $em->getRepository(Orders::class)->findWithProduct();
@@ -347,7 +346,6 @@ class DefaultController extends AbstractController
         return $this->render('default/details.html.twig',[
             'product' => $product,
             'soldoutcheck' => $soldOutCheck,
-//            'cart' => $cart,
             'questionForm' => $questionForm->createView(),
             'questionList' => $questionList,
             'answerList' => $answerList,
@@ -406,10 +404,8 @@ class DefaultController extends AbstractController
      */
     public function brand(Request $request) : Response
     {
-//        $userId = $this->getUser()->getId();
         $em = $this->getDoctrine()->getManager();
 
-//        $orderData = $em->getRepository(Orders::class)->findBy(['userId' => $userId]);
         $categories = $em->getRepository(Category::class)->findAll();
         $brands = $em->getRepository(Brand::class)->findAll();
 
@@ -422,7 +418,6 @@ class DefaultController extends AbstractController
         $pages = $em->getRepository(Page::class)->findAll();
         return $this->render('default/brand.html.twig',[
             'categories' => $categories,
-//            'cart' => $orderData,
             'products' => $products,
             'soldoutcheck' => $soldOutCheck,
             'brands' => $brands,
@@ -437,11 +432,14 @@ class DefaultController extends AbstractController
     public function about() : Response
     {
         $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
         return $this->render('default/about.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
+            'pages' => $pages,
         ]);
     }
 
@@ -502,12 +500,87 @@ class DefaultController extends AbstractController
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
-//        return $this->redirectToRoute($slug);
         return $this->render('default/pages.html.twig',[
-        'categories' => $categories,
-        'electronics' => $category,
-        'page' => $page,
+            'categories' => $categories,
+            'electronics' => $category,
+            'page' => $page,
             'pages' => $pages,
-    ]);
+        ]);
+    }
+
+    /**
+     * @Route("/faqs", name="faqs")
+     */
+    public function faqs()
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
+
+        return $this->render('default/faqs.html.twig',[
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+        ]);
+    }
+
+    /**
+     * @Route("/help", name="help")
+     */
+    public function help()
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
+
+        return $this->render('default/help.html.twig',[
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+        ]);
+    }
+
+    /**
+     * @Route("/terms-of-use", name="terms")
+     */
+    public function terms()
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
+
+        return $this->render('default/terms.html.twig',[
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+        ]);
+    }
+
+
+    /**
+     * @Route("/privacy-policy", name="privacy")
+     */
+    public function privacy()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
+
+        return $this->render('default/privacy.html.twig',[
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+        ]);
     }
 }

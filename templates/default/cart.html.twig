@@ -1,9 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{#{% block title %}Shopping Cart{% endblock %}#}
-{#{% block header %}#}
-{#    {% include 'header.html.twig' %}#}
-{#{% endblock %}#}
+{% block footercategory %}
+    <li class="mb-3">
+        <strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
+    </li>
+    {% for cate in categories %}
+        {% if cate.parent is not null %}
+            {% if cate.parent.name == 'Electronics' %}
+                <li class="mb-3">
+                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    <li class="mb-3">
+        <strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
+    </li>
+    {% for cate in categories %}
+        {% if cate.parent is not null %}
+            {% if cate.parent.name == 'Books' %}
+                <li class="mb-3">
+                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
 
 {% block search %}
     <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
@@ -177,6 +199,35 @@
         {% endfor %}
     </div>
 {% endblock %}
+
+{% block footercategorylinks %}
+    <h5 class="font-weight-bold mb-2">Electronics:</h5>
+    <ul>
+        {% for category in categories %}
+            {% if category.parent is not null %}
+                {% if category.parent.name == 'Electronics' %}
+                    <li class="m-sm-1">
+                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <h5 class="font-weight-bold mb-2">Books: </h5>
+    <ul>
+        {% for category in categories %}
+            {% if category.parent is not null %}
+                {% if category.parent.name == 'Books' %}
+                    <li class="m-sm-1">
+                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+
 
 {% block  javascripts %}
     {{ parent() }}

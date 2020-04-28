@@ -1,0 +1,287 @@
+{% extends 'base.html.twig' %}
+
+{% block search %}
+	<form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+		<input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+		<button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+	</form>
+{% endblock  %}
+
+{% block category %}
+	<select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+		<option value="">All Categories</option>
+		{% for category in categories %}
+			{% if category.parent is null %}
+				<option value="{{ category.name }}">{{ category.detailName }}</option>
+			{% endif %}
+		{% endfor %}
+	</select>
+{% endblock %}
+
+{% block products %}
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Electronics
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Electronics' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Electronics' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Books
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Books' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Books' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+{% endblock %}
+
+{% block pages %}
+	<div class="dropdown-menu">
+		{% for page in pages %}
+			<a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block body %}
+	<!-- banner-2 -->
+	<div class="page-head_agile_info_w3l">
+
+	</div>
+	<!-- //banner-2 -->
+	<!-- page -->
+	<div class="services-breadcrumb">
+		<div class="agile_inner_breadcrumb">
+			<div class="container">
+				<ul class="w3_short">
+					<li>
+						<a href="{{ path('default') }}">Home</a>
+						<i>|</i>
+					</li>
+					<li>Faqs</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- //page -->
+
+	<!-- Faqs -->
+	<div class="faqs-w3l py-sm-5 py-4">
+		<div class="container py-xl-4 py-lg-2">
+			<!-- tittle heading -->
+			<h3 class="tittle-w3l text-center mb-lg-5 mb-sm-4 mb-3">
+				<span>F</span>aqs
+			</h3>
+			<!-- //tittle heading -->
+			<h3 class="w3-head mb-2">Top 10 Frequently asked questions</h3>
+			<div class="faq-w3agile">
+				<ul class="faq pl-4">
+					<li class="item1 mt-3 pl-2">
+						<a href="#" title="click here">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempor vehicula ipsum nec ?</a>
+						<ul>
+							<li class="subitem1">
+								<p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore.
+									At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+									corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item2 mt-3 pl-2">
+						<a href="#" title="click here">The standard Lorem Ipsum passage Etiam faucibus viverra libero vel efficitur. Ut semper nisl ut laoreet ultrices ?</a>
+						<ul>
+							<li class="subitem1">
+								<p> Tincidunt ut laoreet dolore At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
+									nibh euismod consectetuer adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus
+									qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+									cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item3 mt-3 pl-2">
+						<a href="#" title="click here">Consectetuer adipiscing elit Etiam faucibus viverra libero vel efficitur. Ut semper nisl ut laoreet ultrices?</a>
+						<ul>
+							<li class="subitem1">
+								<p>Dincidunt ut laoreet dolore At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
+									nibh euismod consectetuer adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus
+									qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+									cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item4 mt-3 pl-2">
+						<a href="#" title="click here">Sed diam nonummy nibh euismod Etiam faucibus viverra libero vel efficitur. Ut semper nisl ut laoreet ultrices?</a>
+						<ul>
+							<li class="subitem1">
+								<p>At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod consectetuer
+									adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+									voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item5 mt-3 pl-2">
+						<a href="#" title="click here">Euismod tincidunt laoreet Etiam faucibus viverra libero vel efficitur ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod consectetuer
+									adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+									voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item6 mt-3 pl-2">
+						<a href="#" title="click here">Voluptas sit aspernatur aut Ut semper nisl ut laoreet ultrices ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod consectetuer
+									adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+									voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item7 mt-3 pl-2">
+						<a href="#" title="click here">Donec ut quam ligula feugiat Ut semper nisl ut laoreet ultrices ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod consectetuer
+									adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+									voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item8 mt-3 pl-2">
+						<a href="#" title="click here">The standard Lorem Ipsum Ut semper nisl ut laoreet ultrices passage ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>Lorem ipsum dolor sit amet At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
+									nibh euismod consectetuer adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus
+									qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+									cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item9 mt-3 pl-2">
+						<a href="#" title="click here">Consectetuer adipiscing Ut semper nisl ut laoreet ultrices elit ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>Lorem ipsum dolor sit amet At vero eos et Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
+									nibh euismod consectetuer adipiscing elit, sed diam nonummy nibh euismod accusamus et iusto odio dignissimos ducimus
+									qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+									cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+					<li class="item10 mt-3 pl-2">
+						<a href="#" title="click here">Sed diam nonummy Ut semper nisl ut laoreet ultrices nibh euismod ?</a>
+						<ul>
+							<li class="subitem1">
+								<p>Consectetuer adipiscing elit, sed diam nonummy nibh euismod consectetuer adipiscing elit, sed diam nonummy nibh euismod
+									accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
+									et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- //Faqs -->
+{% endblock %}
+
+{% block footercategory %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Electronics' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Books' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block footercategorylinks %}
+	<h5 class="font-weight-bold mb-2">Electronics:</h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Electronics' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<h5 class="font-weight-bold mb-2">Books: </h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Books' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+
+{% endblock %}

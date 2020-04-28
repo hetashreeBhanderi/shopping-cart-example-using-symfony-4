@@ -1,9 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Product Details {% endblock %}
-{#{% block header %}#}
-{#    {% include 'header.html.twig' %}#}
-{#{% endblock %}#}
+{% block footercategory %}
+    <li class="mb-3">
+        <strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
+    </li>
+    {% for cate in categories %}
+        {% if cate.parent is not null %}
+            {% if cate.parent.name == 'Electronics' %}
+                <li class="mb-3">
+                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    <li class="mb-3">
+        <strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
+    </li>
+    {% for cate in categories %}
+        {% if cate.parent is not null %}
+            {% if cate.parent.name == 'Books' %}
+                <li class="mb-3">
+                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}
 
 {% block search %}
     <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
@@ -85,37 +107,60 @@
 {% endblock %}
 
 {% block body %}
-    <div style="border: #E0E0E0 1px solid; width: 350px; height: auto; margin-left: 2%; margin-top: 2%;">
-        <div style="margin-left: 2%; margin-top: 2%; margin-bottom: 2%">
-            <form name="productDetailForm" action="{{ path('addtocart') }}" method="post">
-                <img src="{{ asset('images/') }}{{ product.name }}" height="240" width="240"> <br>
-                {{ product.description }} <br>
-                {% if product.brand is not null %} Brand is {{ product.brand.name }}. <br> {% endif %}
-                Price Rs. {{ product.price }} <br>
-                <input type="hidden" value="{{ product.id }}" name="productId">
-                <input type="number" style="width: 20%; font-size: .875rem; margin-right: 10px" class="product-quantity" name="quantity" min="0"
-                {% for availableQty in soldoutcheck %}
-                    {% if product.id is same as(availableQty.id) %}
-                        {% if availableQty.totalQty + product.maxQtyPerUserPerCart > product.availavleQty%}
-                            max="{{ product.availavleQty - availableQty.totalQty }}"
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                    max="{{ product.maxQtyPerUserPerCart }}" 
-                value="1"/>
-                <input id="addToCart" type="submit"
-                {% for availableQty in soldoutcheck %}
-                    {% if product.id is same as(availableQty.id) %}
-                        {% if availableQty.totalQty == product.availavleQty %} value="Sold out" disabled {% endif %}
-                    {% endif %}
-                {% endfor %}
-                    value="Add to cart" class="btn btn-sm btn-primary" style="padding-top: .40rem; font-size: .900rem; margin-right: 10px"/>
-                <a href="{{ path('default') }}" class="btn btn-sm btn-primary" style="padding-top: .40rem; font-size: .900rem;">Back</a>
-            </form>
+    <!-- detail block -->
+
+<div class="ads-grid py-sm-5 py-4">
+    <div class="container py-xl-4 py-lg-2">
+        <div class="product-sec1 px-sm-4 px-3 py-sm-5  py-3 mb-4">
+{#            <div class="row">#}
+
+        <table style="margin-left: 5%; margin-top: 2%; margin-bottom: 2%;">
+            <tr style="height: auto; width: auto">
+                <td style="border: #e0e0e0 1px solid; width: auto;  margin-top: 2%; margin-bottom: 2%; margin-right: 2%; padding: 20px 20px 20px 20px;">
+                    <div>
+                        <img src="{{ asset('images/') }}{{ product.name }}" style="width: auto; height: auto">
+                    </div>
+                </td>
+                <td style="padding: 30px 30px 30px 30px; font-size: larger; width: auto ">
+                    <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+                        <form name="productDetailForm" action="{{ path('addtocart') }}" method="post">
+                            {{ product.description }} <br>
+                            {% if product.brand is not null %} Brand is {{ product.brand.name }}. <br> {% endif %}
+                            Price Rs. {{ product.price }} <br>
+                            <input type="hidden" value="{{ product.id }}" name="productId">
+                            <input type="number" style="width: 40%; font-size:.875rem; margin-bottom: 2px" class="product-quantity" name="quantity" min="0"
+                                {% for availableQty in soldoutcheck %}
+                                    {% if product.id is same as(availableQty.id) %}
+                                        {% if availableQty.totalQty + product.maxQtyPerUserPerCart > product.availavleQty%}
+                                            max="{{ product.availavleQty - availableQty.totalQty }}"
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                   max="{{ product.maxQtyPerUserPerCart }}"
+                                   value="1"/>
+                            <input id="addToCart" type="submit"
+                                {% for availableQty in soldoutcheck %}
+                                    {% if product.id is same as(availableQty.id) %}
+                                        {% if availableQty.totalQty == product.availavleQty %} value="Sold out" disabled {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                   value="Add to cart" class="button btn" style="margin-bottom: 5px" />
+{#                            <a href="{{ path('default') }}" class="button2 btn-primary" style="width: inherit">Back</a>#}
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
+{#            </div>#}
         </div>
     </div>
+</div>
+    <!-- detail block -->
 
-    <div class="a-section askDetailPageSearchWidgetSection" style="margin-left: 2%">
+    <!-- Q&A block -->
+<div class="footer-top-first">
+<div class="container py-md-5 py-sm-4 py-3">
+    <div class="a-section askDetailPageSearchWidgetSection">
         <div class="a-section a-spacing-extra-large">
             <h2 class="a-spacing-micro">
                 Have a question?
@@ -190,6 +235,9 @@
             </div>
         </div>
     </div>
+</div>
+</div>
+    <!-- Q&A block -->
 {% endblock %}
 
 {% block pages %}
@@ -198,4 +246,32 @@
             <a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block footercategorylinks %}
+    <h5 class="font-weight-bold mb-2">Electronics:</h5>
+    <ul>
+        {% for category in categories %}
+            {% if category.parent is not null %}
+                {% if category.parent.name == 'Electronics' %}
+                    <li class="m-sm-1">
+                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <h5 class="font-weight-bold mb-2">Books: </h5>
+    <ul>
+        {% for category in categories %}
+            {% if category.parent is not null %}
+                {% if category.parent.name == 'Books' %}
+                    <li class="m-sm-1">
+                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+
 {% endblock %}

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
+use App\Entity\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,13 +20,24 @@ class SecurityController extends AbstractController
          if ($this->getUser()) {
              return $this->redirectToRoute('default');
          }
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+        ]);
     }
 
     /**
