@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block search %}
-    <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
-        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+    <form class="form-inline" name="search" action="{{ path('product') }}" autocomplete="off" method="post">
+        <input name="searchText" id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
         <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
     </form>
 {% endblock  %}
@@ -88,6 +88,10 @@
 {% endblock %}
 
 {% block body %}
+{#    {% set products = []%}#}
+{#    {% for p in data %}#}
+{#        {% set products = products|merge([p.description]) %}#}
+{#    {% endfor %}#}
     <!-- banner -->
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <!-- Indicators-->
@@ -191,7 +195,7 @@
                                 <div class="col-md-4 product-men mt-5">
                                     <div class="men-pro-item simpleCart_shelfItem">
                                         <div class="men-thumb-item text-center">
-                                            <img src="{{ asset('images/') }}{{ product.name }}" style="height:200px" alt="">
+                                            <img src="{{ asset('images/uploads/' ~ product.productImage) | imagine_filter('squared_thumbnail_small') }}"  alt="">
                                             <div class="men-cart-pro">
                                                 <div class="inner-men-cart-pro">
                                                     <a href="{{ path('detail',{'id':product.id}) }}" class="link-product-add-cart">Quick View</a>
@@ -249,7 +253,7 @@
                                 <div class="col-md-4 product-men mt-5">
                                     <div class="men-pro-item simpleCart_shelfItem">
                                         <div class="men-thumb-item text-center">
-                                            <img src="{{ asset('images/') }}{{ product.name }}" style="height:200px" alt="">
+                                            <img src="{{ asset('images/uploads/' ~ product.productImage) | imagine_filter('squared_thumbnail_small') }}"  alt="">
                                             <div class="men-cart-pro">
                                                 <div class="inner-men-cart-pro">
                                                     <a href="{{ path('detail',{'id':product.id}) }}" class="link-product-add-cart">Quick View</a>
@@ -318,7 +322,7 @@
                                 <div class="col-md-4 product-men mt-5">
                                     <div class="men-pro-item simpleCart_shelfItem">
                                         <div class="men-thumb-item text-center">
-                                            <img src="{{ asset('images/') }}{{ product.name }}" style="height:200px" alt="">
+                                            <img src="{{ asset('images/uploads/' ~ product.productImage) | imagine_filter('squared_thumbnail_small') }}"  alt="">
                                             <div class="men-cart-pro">
                                                 <div class="inner-men-cart-pro">
                                                     <a href="{{ path('detail',{'id':product.id}) }}" class="link-product-add-cart">Quick View</a>
@@ -712,6 +716,22 @@
 {% endblock %}
 
 {% block  javascripts %}
+    <!-- start-smooth-scrolling -->
+    <script src="{{asset('js/move-top.js')}}"></script>
+    <script src="{{ asset('js/easing.js') }}"></script>
+    <script>
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+
+                $('html,body').animate({
+                    scrollTop: $(this.hash).offset().top
+                }, 1000);
+            });
+        });
+    </script>
+    <!-- //end-smooth-scrolling -->
+
     <!-- smooth-scrolling-of-move-up -->
     <script>
         $(document).ready(function () {
@@ -726,26 +746,38 @@
             $().UItoTop({
                 easingType: 'easeOutQuart'
             });
-
         });
     </script>
     <!-- //smooth-scrolling-of-move-up -->
-    {{ parent() }}
+
     <script>
         $(document).ready(function () {
             $('#addToCart').on('click', function () {
                 $.ajax({
-                        url: '{{ (path('default')) }}',
-                        dataType: "json",
-                        type: "POST",
-                        data: {
-                            quantity: product.quantity,
-                            productId: product.productId,
-                        },
-                        success: function (response) {
-                        }
-                    });
+                    url: '{{ (path('default')) }}',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        quantity: product.quantity,
+                        productId: product.productId,
+                    },
+                    success: function (response) {
+                    }
                 });
             });
-        </script>
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var product = {{ products|json_encode|raw }};
+
+            $(function () {
+                a = document.createElement("DIV");
+                a.setAttribute("class","autocomplete-items");
+                $('#searchText').autocomplete({
+                    source: product,
+                });
+            });
+        });
+    </script>
 {% endblock %}

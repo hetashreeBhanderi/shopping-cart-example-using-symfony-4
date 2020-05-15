@@ -1,196 +1,422 @@
 {% extends 'base.html.twig' %}
-{% block title %} Shopping Cart {% endblock %}
-
-{% block footercategory %}
-    <li class="mb-3">
-        <strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
-    </li>
-    {% for cate in categories %}
-        {% if cate.parent is not null %}
-            {% if cate.parent.name == 'Electronics' %}
-                <li class="mb-3">
-                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
-                </li>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-    <li class="mb-3">
-        <strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
-    </li>
-    {% for cate in categories %}
-        {% if cate.parent is not null %}
-            {% if cate.parent.name == 'Books' %}
-                <li class="mb-3">
-                    <a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
-                </li>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-{% endblock %}
-
-{% block search %}
-    <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
-        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
-        <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
-    </form>
-{% endblock  %}
-
-{% block category %}
-    <select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
-        <option value="">All Categories</option>
-        {% for category in categories %}
-            {% if category.parent is null %}
-                <option value="{{ category.name }}">{{ category.detailName }}</option>
-            {% endif %}
-        {% endfor %}
-    </select>
-{% endblock %}
-
-{% block products %}
-    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Electronics
-        </a>
-        <div class="dropdown-menu">
-            <div class="agile_inner_drop_nav_info p-4">
-                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
-                <div class="row">
-                    <div class="col-sm-6 multi-gd-img">
-                        <ul class="multi-column-dropdown">
-                            {% for electronic in electronics %}
-                                {% if electronic.parent.name == 'Electronics' %}
-                                    <li>
-                                        <a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
-                                    </li>
-                                {% elseif electronic.parent.parent is not null %}
-                                    {% if electronic.parent.parent.name == 'Electronics' %}
-                                        <li class="elename">
-                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </li>
-    <li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Books
-        </a>
-        <div class="dropdown-menu">
-            <div class="agile_inner_drop_nav_info p-4">
-                <h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
-                <div class="row">
-                    <div class="col-sm-6 multi-gd-img">
-                        <ul class="multi-column-dropdown">
-                            {% for electronic in electronics %}
-                                {% if electronic.parent.name == 'Books' %}
-                                    <li>
-                                        <a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
-                                    </li>
-                                {% elseif electronic.parent.parent is not null %}
-                                    {% if electronic.parent.parent.name == 'Books' %}
-                                        <li class="elename">
-                                            <a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
-                                        </li>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </li>
-{% endblock %}
 
 {% block body %}
-    <div style="margin-top: 10px; margin-left: 10px">
-        Please fill the details for checkout, {{ app.user.username }} !
-        <div style="margin-top: 20px; border: lightgray 1px solid; width: 300px; padding-top: 15px; padding-left: 15px; padding-bottom: 15px">
-            <table>
-            {{ form_start(addressForm) }}
-            <tr>
-                <td>
-                    {{ form_label(addressForm.addressDetails) }}
-                </td>
-                <td>
-                    {{ form_widget(addressForm.addressDetails) }}
-                </td>
-            </tr>
-                <tr>
-                    <td>
-                        {{ form_label(addressForm.city) }}
-                    </td>
-                    <td>
-                        {{ form_widget(addressForm.city) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form_label(addressForm.state) }}
-                    </td>
-                    <td>
-                        {{ form_widget(addressForm.state) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form_label(addressForm.pincode) }}
-                    </td>
-                    <td>
-                        {{ form_widget(addressForm.pincode) }}
-                    </td>
-                </tr>
-            <tr>
-                <td colspan="2" >
-                    <div style="margin-left: 20px; margin-top: 10px">
-                    {{ form_widget(addressForm.payment,{'attr':{'class':'btn btn-lg btn-secondary'}}) }}
-                    <a style="margin-left: 20px" href="{{ path('default') }}" class="btn btn-lg btn-secondary">Home</a>
-                    </div>
-                </td>
-            </tr>
-            {{ form_end(addressForm) }}
-            </table>
-        </div>
-    </div>
+	<!-- banner-2 -->
+	<div class="page-head_agile_info_w3l">
+
+	</div>
+	<!-- //banner-2 -->
+	<!-- page -->
+	<div class="services-breadcrumb">
+		<div class="agile_inner_breadcrumb">
+			<div class="container">
+				<ul class="w3_short">
+					<li>
+						<a href="{{ path('default') }}">Home</a>
+						<i>|</i>
+					</li>
+					<li>Checkout</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- //page -->
+	<!-- checkout page -->
+	<div class="privacy py-sm-5 py-4">
+		<div class="container py-xl-4 py-lg-2">
+			<!-- tittle heading -->
+			<h3 class="tittle-w3l text-center mb-lg-5 mb-sm-4 mb-3">
+				<span>C</span>heckout
+			</h3>
+			<!-- //tittle heading -->
+			<div class="checkout-right">
+				{% set cartPrice = 0 %}
+				{% set cartQuantity = 0 %}
+				{% if cart is empty %}
+					<h4 class="mb-sm-4 mb-3">Empty Cart</h4>
+				{% else %}
+				<div class="table-responsive">
+					<table class="timetable_sub">
+						<thead>
+							<tr>
+								<th>SL No.</th>
+								<th>Product</th>
+								<th>Product Name</th>
+								<th>Quality</th>
+								<th>Price</th>
+								<th>Total Price</th>
+								<th>Remove</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% set slno = 0 %}
+						{% for cartvalue in cart %}
+							<tr class="rem1">
+								{% set slno = slno + 1 %}
+								<td class="invert">{{ slno }}</td>
+								<td class="invert">
+										<a href="{{ path('detail',{'id':cartvalue.productId.id}) }}">
+											<img src="{{ asset('images/uploads/') }}{{ cartvalue.productId.productImage }}" alt=" " class="cart-item-image" >
+										</a>
+								</td>
+									<td class="invert">{{ cartvalue.productId.description }}</td>
+									<td class="invert">
+										<form name="cart" action="{{ path('addtocart') }}" method="post">
+										<div class="quantity">
+											<div class="quantity-select">
+{#												<input type="submit" class="entry value-minus minus" style="background-color: white; color: black" value="-">#}
+													<input type="hidden" name="productId" value="{{ cartvalue.productId.id }}">
+													<input type="hidden" name="orderId" value="{{ cartvalue.id }}">
+													<input type="number" class="product-quantity" name="qty" min="0"
+                                    					{% for availableQty in soldoutcheck %}
+															{% if cartvalue.productId.id is same as(availableQty.id) %}
+																{% if availableQty.totalQty == cartvalue.productId.availavleQty %}
+																max="{{ cartvalue.quantity }}"
+																{% endif %}
+															{% endif %}
+														{% endfor %}
+                                   						max="{{ cartvalue.productId.maxQtyPerUserPerCart }}" style="width: 60px;" value="{{ cartvalue.quantity }}" />
+												<input type="submit" id="update" class="button" value="update">
+											</div>
+										</div>
+										</form>
+									</td>
+								<td class="invert">{{ cartvalue.productId.price }}</td>
+								<td class="invert">{{ cartvalue.quantity * cartvalue.productId.price }}</td>
+								<td class="invert">
+									<div class="rem">
+									<a href="{{ path('remove', {'id' : cartvalue.id }) }}" class="close1"> </a>
+									</div>
+								</td>
+							</tr>
+							{% set cartPrice = cartvalue.quantity * cartvalue.productId.price + cartPrice %}
+							{% set cartQuantity = cartvalue.quantity + cartQuantity %}
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% endif %}
+			</div>
+			<div class="checkout-left">
+				<div class="address_form_agile mt-sm-5 mt-4">
+					<h4 class="mb-sm-4 mb-3">Add a new Details</h4>
+{#					<form action="{{ path('payment') }}" method="post" class="creditly-card-form agileinfo_form">#}
+						<div class="creditly-wrapper wthree, w3_agileits_wrapper">
+							<div class="information-wrapper">
+								<div class="first-row">
+									<div class="controls form-group">
+										<input class="billing-address-name form-control" type="text" name="name" placeholder="Full Name" required="">
+									</div>
+									<div class="w3_agileits_card_number_grids">
+										<div class="w3_agileits_card_number_grid_left form-group">
+											<div class="controls">
+												<input type="text" class="form-control" placeholder="Mobile Number" name="number" required="">
+											</div>
+										</div>
+                                        {{ form_start(checkoutForm) }}
+                                        <div class="w3_agileits_card_number_grid_right form-group">
+											<div class="controls">
+                                                {{ form_widget(checkoutForm.addressDetails,{'attr':{'class':'form-control'}}) }}
+{#												<input type="text" class="form-control" placeholder="Landmark" name="landmark" required="">#}
+											</div>
+										</div>
+									</div>
+									<div class="controls form-group">
+                                        {{ form_widget(checkoutForm.city,{'attr':{'class':'form-control'}}) }}
+{#										<input type="text" class="form-control" placeholder="Town/City" name="city" required="">#}
+									</div>
+                                    <div class="controls form-group">
+                                        {{ form_widget(checkoutForm.state,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                    <div class="controls form-group">
+                                        {{ form_widget(checkoutForm.pincode,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+									<div class="controls form-group">
+										<select class="option-w3ls">
+											<option>Select Address type</option>
+											<option>Office</option>
+											<option>Home</option>
+											<option>Commercial</option>
+										</select>
+									</div>
+								</div>
+                                {{ form_widget(checkoutForm.payment,{'attrr':{'class':'submit check_out btn'}}) }}
+{#								<button class="submit check_out btn">Delivery to this Address</button>#}
+								{{ form_end(checkoutForm) }}
+							</div>
+
+						</div>
+					</form>
+					<div class="checkout-right-basket">
+						<a href="{{ path('payment') }}">Make a Payment
+							<span class="far fa-hand-point-right"></span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- //checkout page -->
+
+	<!-- middle section -->
+	<div class="join-w3l1 py-sm-5 py-4">
+		<div class="container py-xl-4 py-lg-2">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="join-agile text-left p-4">
+						<div class="row">
+							<div class="col-sm-7 offer-name">
+								<h6>Smooth, Rich & Loud Audio</h6>
+								<h4 class="mt-2 mb-3">Branded Headphones</h4>
+								<p>Sale up to 25% off all in store</p>
+							</div>
+							<div class="col-sm-5 offerimg-w3l">
+								<img src="{{ asset('images/off1.png') }}" alt="" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 mt-lg-0 mt-5">
+					<div class="join-agile text-left p-4">
+						<div class="row ">
+							<div class="col-sm-7 offer-name">
+								<h6>A Bigger Phone</h6>
+								<h4 class="mt-2 mb-3">Smart Phones 5</h4>
+								<p>Free shipping order over $100</p>
+							</div>
+							<div class="col-sm-5 offerimg-w3l">
+								<img src="{{ asset('images/off2.png') }}" alt="" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- middle section -->
 {% endblock %}
 
 {% block pages %}
-    <div class="dropdown-menu">
-        {% for page in pages %}
-            <a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
-        {% endfor %}
-    </div>
+	<div class="dropdown-menu">
+		{% for page in pages %}
+			<a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+		{% endfor %}
+	</div>
 {% endblock %}
 
 {% block footercategorylinks %}
-    <h5 class="font-weight-bold mb-2">Electronics:</h5>
-    <ul>
-        {% for category in categories %}
-            {% if category.parent is not null %}
-                {% if category.parent.name == 'Electronics' %}
-                    <li class="m-sm-1">
-                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
-                    </li>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-    </ul>
-    <h5 class="font-weight-bold mb-2">Books: </h5>
-    <ul>
-        {% for category in categories %}
-            {% if category.parent is not null %}
-                {% if category.parent.name == 'Books' %}
-                    <li class="m-sm-1">
-                        <a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
-                    </li>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-    </ul>
+	<h5 class="font-weight-bold mb-2">Electronics:</h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Electronics' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<h5 class="font-weight-bold mb-2">Books: </h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Books' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
 
+{% endblock %}
+
+{% block footercategory %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Electronics' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Books' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block search %}
+	<form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+		<input name="searchText" id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+		<button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+	</form>
+{% endblock  %}
+
+{% block category %}
+	<select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+		<option value="">All Categories</option>
+		{% for category in categories %}
+			{% if category.parent is null %}
+				<option value="{{ category.name }}">{{ category.detailName }}</option>
+			{% endif %}
+		{% endfor %}
+	</select>
+{% endblock %}
+
+{% block products %}
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Electronics
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Electronics' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Electronics' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Books
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Books' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Books' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+{% endblock %}
+
+{% block javascripts %}
+	<!-- start-smooth-scrolling -->
+	<script src="{{asset('js/move-top.js')}}"></script>
+	<script src="{{ asset('js/easing.js') }}"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+	<!-- smooth-scrolling-of-move-up -->
+	<script>
+		$(document).ready(function () {
+			/*
+            var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };
+            */
+			$().UItoTop({
+				easingType: 'easeOutQuart'
+			});
+
+		});
+	</script>
+	<!-- //smooth-scrolling-of-move-up -->
+
+{#	{{ parent() }}#}
+	<script id="ajax">
+		$(document).ready(function () {
+			// $('.plus').on('click',function (e) {
+			// 	// e.preventDefault();
+			// 	var divUpd = $(this).parent().find('.qty');
+			// 	newVal = parseInt(divUpd.val()) + 1;
+			// 	$(this).parent().find('.qty').val(newVal);
+			// });
+			// $('.minus').on('click', function (e) {
+			// 	// e.preventDefault();
+			// 	var divUpd = $(this).parent().find('.qty'),
+			// 		newVal = parseInt(divUpd.val()) - 1;
+			// 	$(this).parent().find('.qty').val(newVal);
+			// });
+
+			$('#update').on('click', function(){
+                $.ajax({
+					url: '{{ (path('addtocart')) }}',
+                		dataType: "json",
+                		type: "POST",
+                		data: {
+                			qty : cart.qty,
+                			productId : cart.productId,
+                			orderId : cart.orderId,
+                		},
+                		success: function (response) {
+                		}
+                	});
+            });
+		});
+	</script>
+	<!--search-box-autocompelte-->
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$(document).ready(function () {
+			var product = {{ products|json_encode|raw }};
+			$(function () {
+				$('#searchText').autocomplete({
+					source: product,
+				});
+			});
+		});
+	</script>
+	<!--//search-box-autocompelte-->
 {% endblock %}

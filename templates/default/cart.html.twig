@@ -130,7 +130,7 @@
                 <tr>
                     <td width="1%">
                         <a href="{{ path('detail',{'id': cartValue.productId.id}) }}">
-                            <img src="{{ asset('images/') }}{{ cartValue.productId.name }}" alt="productImage" class="cart-item-image" />
+                            <img src="{{ asset('images/uploads/') }}{{ cartValue.productId.productImage }}" alt="productImage" class="cart-item-image" />
                         </a>
                     </td>
                     <td id="name" style="text-align:right; font-size: medium"> {{ cartValue.productId.description }}</td>

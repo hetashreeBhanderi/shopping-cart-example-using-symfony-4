@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -68,11 +69,23 @@ class Product
      */
     private $brand;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="product")
+     */
+    private $images;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Please, upload the photo.")
+     */
+    private $productImage;
+
     public function __construct()
     {
         $this->orderId = new ArrayCollection();
         $this->answers = new ArrayCollection();
         $this->questions = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -253,6 +266,49 @@ class Product
     public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getProduct() === $this) {
+                $image->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getProductImage()
+    {
+        return $this->productImage;
+    }
+
+    public function setProductImage($productImage): self
+    {
+        $this->productImage = $productImage;
 
         return $this;
     }

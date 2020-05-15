@@ -5,7 +5,11 @@
         "php": "^7.2.28",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "enqueue/enqueue-bundle": "^0.10.1",
+        "enqueue/fs": "^0.10.1",
+        "knplabs/knp-gaufrette-bundle": "^0.7.1",
         "knplabs/knp-paginator-bundle": "^5.1",
+        "liip/imagine-bundle": "^2.3",
         "php-http/curl-client": "^2.1",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/annotations-pack": "^1.0",
@@ -80,7 +84,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "5.0.*"
         }
     }

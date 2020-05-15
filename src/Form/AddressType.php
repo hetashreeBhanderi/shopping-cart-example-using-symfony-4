@@ -15,15 +15,25 @@ class AddressType extends AbstractType
     {
         $builder
             ->add('addressDetails', TextType::class,[
-                'label' => "Address"
+                'label' => "Address",
+                'attr' => array('class'=>'form-control',
+                    'placeholder'=>'Full address')
             ])
-            ->add('city', TextType::class)
-            ->add('city', TextType::class)
-            ->add('state', TextType::class)
-            ->add('pincode', TextType::class)
+            ->add('city', TextType::class,[
+                'attr'=> array('class'=>'form-control',
+                    'placeholder'=>'Town/City')
+            ])
+            ->add('state', TextType::class,[
+                'attr'=> array('class'=>'form-control',
+                    'placeholder'=>'State')
+            ])
+            ->add('pincode', TextType::class,[
+                'attr'=> array('class'=>'form-control',
+                    'placeholder'=>'PinCode/PstalCode')
+            ])
             ->add('payment', SubmitType::class,[
-                'label' => 'Proceed',
-                'attr'=>array('class' => 'btn btn-lg btn-primary')
+                'label' => 'Deliver to this Address',
+                'attr'=>array('class' => 'submit check_out btn')
             ])
         ;
     }

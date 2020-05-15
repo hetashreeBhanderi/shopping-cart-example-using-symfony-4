@@ -1,0 +1,16 @@
+{% extends 'admin.html.twig' %}
+
+
+{% block main %}
+    <div class="panel-header panel-header-sm">
+        <p class="navbar-brand" style="color: whitesmoke">Edit Page</p>
+    </div>
+<div style="background-color: mintcream;">
+
+    {{ include('page/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('page_index') }}" class="navbar-brand">Back to list</a>
+
+    {{ include('page/_delete_form.html.twig') }}
+</div>
+{% endblock %}

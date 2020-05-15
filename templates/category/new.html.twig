@@ -1,0 +1,12 @@
+{% extends 'admin.html.twig' %}
+
+{% block main %}
+    <div class="panel-header panel-header-sm">
+        <p class="navbar-brand" style="color: whitesmoke">Create new Category</p>
+    </div>
+<div style="background-color: mintcream;">
+    {{ include('category/_form.html.twig') }}
+
+    <a href="{{ path('category_index') }}"  class="navbar-brand">Back to list</a>
+</div>
+{% endblock %}

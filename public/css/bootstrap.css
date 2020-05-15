@@ -1309,6 +1309,7 @@ pre code {
     -ms-flex: 0 0 41.666667%;
     flex: 0 0 41.666667%;
     max-width: 41.666667%;
+    max-height: 20%;
   }
   .col-lg-6 {
     -webkit-box-flex: 0;

@@ -1,0 +1,490 @@
+{% extends 'base.html.twig' %}
+
+{% block footercategory %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Electronics' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	<li class="mb-3">
+		<strong><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></strong>
+	</li>
+	{% for cate in categories %}
+		{% if cate.parent is not null %}
+			{% if cate.parent.name == 'Books' %}
+				<li class="mb-3">
+					<a style="margin-left: 20px;" href="{{ path('category',{'slug':cate.name}) }}">{{ cate.detailName }}</a>
+				</li>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block search %}
+	<form class="form-inline" name="search" action="{{ path('product') }}" method="post">
+		<input name="searchText" id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+		<button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
+	</form>
+{% endblock  %}
+
+{% block category %}
+	<select id="agileinfo-nav_search" name="agileinfo_search" class="border" required="" onchange="self.location= '/shopping-cart/products/category/' + this.options[this.selectedIndex].value;">
+		<option value="">All Categories</option>
+		{% for category in categories %}
+			{% if category.parent is null %}
+				<option value="{{ category.name }}">{{ category.detailName }}</option>
+			{% endif %}
+		{% endfor %}
+	</select>
+{% endblock %}
+
+{% block products %}
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Electronics
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Electronics'}) }}">Electronics</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Electronics' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}">  <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Electronics' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+	<li class="nav-item dropdown mr-lg-2 mb-lg-0 mb-2">
+		<a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Books
+		</a>
+		<div class="dropdown-menu">
+			<div class="agile_inner_drop_nav_info p-4">
+				<h5 class="mb-3"><a href="{{ path('category',{'slug':'Books'}) }}">Books</a></h5>
+				<div class="row">
+					<div class="col-sm-6 multi-gd-img">
+						<ul class="multi-column-dropdown">
+							{% for electronic in electronics %}
+								{% if electronic.parent.name == 'Books' %}
+									<li>
+										<a href="{{ path('category',{'slug':electronic.name}) }}"> <strong>{{ electronic.detailName }}</strong></a>
+									</li>
+								{% elseif electronic.parent.parent is not null %}
+									{% if electronic.parent.parent.name == 'Books' %}
+										<li class="elename">
+											<a href="{{ path('category',{'slug':electronic.name}) }}"> {{ electronic.detailName }} </a>
+										</li>
+									{% endif %}
+								{% endif %}
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+{% endblock %}
+
+{% block body %}
+	<!-- banner-2 -->
+	<div class="page-head_agile_info_w3l">
+
+	</div>
+	<!-- //banner-2 -->
+	<!-- page -->
+	<div class="services-breadcrumb">
+		<div class="agile_inner_breadcrumb">
+			<div class="container">
+				<ul class="w3_short">
+					<li>
+						<a href="{{ path('default') }}">Home</a>
+						<i>|</i>
+					</li>
+					<li>Product Detail</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- //page -->
+
+	<!-- Single Page -->
+	<div class="banner-bootom-w3-agileits py-5">
+		<div class="container py-xl-4 py-lg-2">
+			<!-- tittle heading -->
+			<h3 class="tittle-w3l text-center mb-lg-5 mb-sm-4 mb-3">
+				<span>P</span>roduct
+				<span>D</span>etail</h3>
+			<!-- //tittle heading -->
+			<div class="row">
+				<div class="col-lg-5 col-md-8 single-right-left ">
+					<div class="grid images_3_of_2">
+						<div class="flexslider">
+							<ul class="slides">
+                        {% for i in image %}
+                            {% if i.product is not null %}
+                                {% if i.product.id == product.id %}
+								<li data-thumb="{{ asset('images/') }}{{ i.imageName }}">
+									<div class="thumb-image">
+                        			<img src="{{ asset('images/') }}{{ i.imageName }}" data-imagezoom="true" class="img-fluid" alt=""> </div>
+								</li>
+                    			{% endif %}
+                            {% endif %}
+                        {% endfor %}
+							</ul>
+                        </div>
+{#						<div class="flexslider">#}
+{#							<ul class="slides">#}
+{#                                {% for image in images %}#}
+{#                                {% if image.product is not null %}#}
+{#                                    {% if image.product.id == product.id %}#}
+{#								<li data-thumb="{{ asset('images/') }}{{ image.imageName }}">#}
+{#									<div class="thumb-image">#}
+{#										<img src="{{ asset('images/') }}{{ image.imageName }}" data-imagezoom="true" class="img-fluid" alt=""> </div>#}
+{#								</li>#}
+{#                                    {% endif %}#}
+{#                                    {% endif %}#}
+{#                                {% endfor %}#}
+{#								<li data-thumb="{{ asset('images/') }}{{ product.name }}">#}
+{#									<div class="thumb-image">#}
+{#										<img src="{{ asset('images/') }}{{ product.name }}" data-imagezoom="true" class="img-fluid" alt=""> </div>#}
+{#								</li>#}
+{#								<li data-thumb="{{ asset('images/') }}{{ product.name }}">#}
+{#									<div class="thumb-image">#}
+{#										<img src="{{ asset('images/') }}{{ product.name }}" data-imagezoom="true" class="img-fluid" alt=""> </div>#}
+{#								</li>#}
+{#							</ul>#}
+{#							<div class="clearfix"></div>#}
+{#						</div>#}
+					</div>
+				</div>
+				<div class="col-lg-7 single-right-left simpleCart_shelfItem">
+					<h3 class="mb-3">{{ product.description }}</h3>
+					<p class="mb-3">
+						<span class="item_price">Rs.{{ product.price }}</span>
+{#						<del class="mx-2 font-weight-light">$280.00</del>#}
+						<label>Free shipping on order above 1000</label>
+					</p>
+					<div class="single-infoagile">
+						<ul>
+							<li class="mb-3">
+								Cash on Delivery Eligible.
+							</li>
+							<li class="mb-3">
+								Shipping Speed to Delivery.
+							</li>
+							<li class="mb-3">
+								EMIs from Rs.655/month.
+							</li>
+							<li class="mb-3">
+								Bank OfferExtra 5% off* with Axis Bank Buzz Credit CardT&C
+							</li>
+						</ul>
+					</div>
+					<div class="product-single-w3l">
+						{% if product.category.parent is not null %}
+						{% if product.category.parent.id == 1 %}
+						<p class="my-3">
+							<i class="far fa-hand-point-right mr-2"></i>
+							<label>1 Year</label>Manufacturer Warranty</p>
+							{% endif %}
+						{% elseif product.category.parent.parent is not null %}
+						{% if product.category.parent.parent.id == 1 %}
+						<p class="my-3">
+							<i class="far fa-hand-point-right mr-2"></i>
+							<label>1 Year</label>Manufacturer Warranty</p>
+						{% endif %}
+						{% endif %}
+						<ul>
+							<li class="mb-1">
+								{{ product.description }}
+							</li>
+							<li class="mb-1">
+							{% if product.brand is not null %} Brand is {{ product.brand.name }}. <br> {% endif %}
+							</li>
+						</ul>
+						<p class="my-sm-4 my-3">
+							<i class="fas fa-retweet mr-3"></i>Net banking & Credit/ Debit/ ATM card
+						</p>
+					</div>
+					<div class="occasion-cart">
+						<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
+							<form name="productDetailForm" action="{{ path('addtocart') }}" method="post">
+								<input type="hidden" value="{{ product.id }}" name="productId">
+								<input type="number" style="width: 40%; font-size:.875rem; margin-bottom: 2px" class="product-quantity" name="quantity" min="0"
+									{% for availableQty in soldoutcheck %}
+										{% if product.id is same as(availableQty.id) %}
+											{% if availableQty.totalQty + product.maxQtyPerUserPerCart > product.availavleQty%}
+												max="{{ product.availavleQty - availableQty.totalQty }}"
+											{% endif %}
+										{% endif %}
+									{% endfor %}
+									   max="{{ product.maxQtyPerUserPerCart }}"
+									   value="1"/>
+								<input id="addToCart" type="submit"
+									{% for availableQty in soldoutcheck %}
+										{% if product.id is same as(availableQty.id) %}
+											{% if availableQty.totalQty == product.availavleQty %} value="Sold out" disabled {% endif %}
+										{% endif %}
+									{% endfor %}
+									   value="Add to cart" class="button btn" style="margin-bottom: 5px" />
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- //Single Page -->
+	<!-- Q&A block -->
+	<div class="footer-top-first">
+		<div class="container py-md-5 py-sm-4 py-3">
+			<div class="a-section askDetailPageSearchWidgetSection">
+				<div class="a-section a-spacing-extra-large">
+					<h2 class="a-spacing-micro">
+						Have a question?
+					</h2>
+					<p>
+						Please write down your questions here...
+					</p>
+					<div>
+						{{ form_start(questionForm) }}
+						<div >
+							<table style="width: 50%">
+								{% if app.user is null %}
+									<div style="color: red">
+										Please login first!
+									</div>
+									<tr>
+										<td>
+											{{ form_widget(questionForm.questionTitle,{'attr':{'disabled':true}}) }}
+										</td>
+										<td>
+											{{ form_widget(questionForm.submit,{'attr':{'class':'btn btn-sm btn-primary','disabled':true}}) }}
+										</td>
+									</tr>
+								{% else %}
+									<tr>
+										<td>
+											{{ form_widget(questionForm.questionTitle) }}
+										</td>
+										<td>
+											{{ form_widget(questionForm.submit,{'attr':{'class':'btn btn-sm btn-primary'}}) }}
+										</td>
+									</tr>
+								{% endif %}
+							</table>
+						</div>
+						{{ form_end(questionForm) }}
+					</div>
+					<div>
+						{% if questionList is not empty %}
+							{% for questions in questionList %}
+								<div class="answerGrid">
+									<form name="questionAnswer" action="{{ path('answer',{'id':questions.id}) }}" class="questionAnswer" method="post">
+										<table>
+											<tr>
+												<td> Question : </td>
+												<td> &nbsp; &nbsp;  </td>
+												<td> {{ questions.questionTitle }} </td>
+											</tr>
+											{% for answers in answerList %}
+												{% if answers.question.id is same as(questions.id) %}
+													<tr>
+														<td>
+															Answer :
+														</td>
+														<td> &nbsp; &nbsp; </td>
+														<td>
+															{{ answers.answer }}
+														</td>
+													</tr>
+												{% endif %}
+											{% endfor %}
+											<tr>
+												<td colspan="2">
+													<input id="ans" type="submit" class="btn btn-sm btn-primary" value="Answer">
+												</td>
+											</tr>
+										</table>
+									</form>
+								</div>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Q&A block -->
+	<!-- middle section -->
+	<div class="join-w3l1 py-sm-5 py-4">
+		<div class="container py-xl-4 py-lg-2">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="join-agile text-left p-4">
+						<div class="row">
+							<div class="col-sm-7 offer-name">
+								<h6>Smooth, Rich & Loud Audio</h6>
+								<h4 class="mt-2 mb-3">Branded Headphones</h4>
+								<p>Sale up to 25% off all in store</p>
+							</div>
+							<div class="col-sm-5 offerimg-w3l">
+								<img src="{{ asset('images/off1.png') }}" alt="" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 mt-lg-0 mt-5">
+					<div class="join-agile text-left p-4">
+						<div class="row ">
+							<div class="col-sm-7 offer-name">
+								<h6>A Bigger Phone</h6>
+								<h4 class="mt-2 mb-3">Smart Phones 5</h4>
+								<p>Free shipping order over $100</p>
+							</div>
+							<div class="col-sm-5 offerimg-w3l">
+								<img src="{{ asset('images/off2.png') }}" alt="" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- middle section -->
+
+{% endblock %}
+
+{% block pages %}
+	<div class="dropdown-menu">
+		{% for page in pages %}
+			<a class="dropdown-item" href="{{ path('page',{'slug': page.slug}) }}">{{ page.title }}</a>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block footercategorylinks %}
+	<h5 class="font-weight-bold mb-2">Electronics:</h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Electronics' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<h5 class="font-weight-bold mb-2">Books: </h5>
+	<ul>
+		{% for category in categories %}
+			{% if category.parent is not null %}
+				{% if category.parent.name == 'Books' %}
+					<li class="m-sm-1">
+						<a href="{{ path('category',{'slug':category.name}) }}" class="border-right pr-2">{{ category.detailName }}</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+
+{% endblock %}
+
+{% block javascripts %}
+
+	<!-- imagezoom -->
+	<script src="{{ asset('js/imagezoom.js') }}"></script>
+	<!-- //imagezoom -->
+
+	<!-- flexslider -->
+	<link rel="stylesheet" href="{{ asset('css/flexslider.css') }}" type="text/css" media="screen" />
+
+	<script src="{{ asset('js/jquery.flexslider.js') }}"></script>
+	<script>
+		// Can also be used with $(document).ready()
+		$(window).load(function () {
+			$('.flexslider').flexslider({
+				animation: "slide",
+				controlNav: "thumbnails"
+			});
+		});
+	</script>
+	<!-- //FlexSlider-->
+
+	<!-- smoothscroll -->
+	<script src="{{ asset('js/SmoothScroll.min.js') }}"></script>
+	<!-- //smoothscroll -->
+
+	<!-- start-smooth-scrolling -->
+	<script src="{{ asset('js/move-top.js') }}"></script>
+	<script src="{{ asset('js/easing.js') }}"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+	<!-- smooth-scrolling-of-move-up -->
+	<script>
+		$(document).ready(function () {
+			/*
+            var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };
+            */
+			$().UItoTop({
+				easingType: 'easeOutQuart'
+			});
+
+		});
+	</script>
+	<!-- //smooth-scrolling-of-move-up -->
+    <!--search-box-autocompelte-->
+    <script>
+        $(document).ready(function () {
+            var product = {{ products|json_encode|raw }};
+            $(function () {
+                $('#searchText').autocomplete({
+                    source: product,
+                });
+            });
+        });
+    </script>
+    <!--//search-box-autocompelte-->
+	<!-- for bootstrap working -->
+	<script src="{{ asset('js/bootstrap.js') }}"></script>
+	<!-- //for bootstrap working -->
+	<!-- //js-files -->
+{% endblock %}

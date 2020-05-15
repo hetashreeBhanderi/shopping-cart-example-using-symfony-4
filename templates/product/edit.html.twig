@@ -1,0 +1,14 @@
+{% extends 'admin.html.twig' %}
+
+{% block main %}
+<div class="panel-header panel-header-sm">
+    <p class="navbar-brand" style="color: whitesmoke">Edit Product</p>
+</div>
+<div style="background-color: mintcream;">
+    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('product_index') }}" class="navbar-brand" style="background-color: mintcream;">Back to list</a>
+
+    {{ include('product/_delete_form.html.twig') }}
+</div>
+{% endblock %}

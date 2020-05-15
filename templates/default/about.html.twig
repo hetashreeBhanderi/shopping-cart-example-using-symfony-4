@@ -2,7 +2,7 @@
 
 {% block search %}
 	<form class="form-inline" name="search" action="{{ path('product') }}" method="post">
-		<input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+		<input name="searchText" id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
 		<button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
 	</form>
 {% endblock  %}
@@ -261,4 +261,54 @@
 			{% endif %}
 		{% endfor %}
 	</ul>
+{% endblock %}
+
+{% block javascripts %}
+	<!-- start-smooth-scrolling -->
+	<script src="{{asset('js/move-top.js')}}"></script>
+	<script src="{{ asset('js/easing.js') }}"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+	<!-- smooth-scrolling-of-move-up -->
+	<script>
+		$(document).ready(function () {
+			/*
+            var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };
+            */
+			$().UItoTop({
+				easingType: 'easeOutQuart'
+			});
+
+		});
+	</script>
+	<!-- //smooth-scrolling-of-move-up -->
+	<!--search-box-autocompelte-->
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$(document).ready(function () {
+			var product = {{ products|json_encode|raw }};
+			$(function () {
+				$('#searchText').autocomplete({
+					source: product,
+				});
+			});
+		});
+	</script>
+	<!--//search-box-autocompelte-->
 {% endblock %}

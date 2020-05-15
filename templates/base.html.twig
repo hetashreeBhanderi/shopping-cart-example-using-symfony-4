@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8">
             <!-- Meta tag Keywords -->
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo2.png') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta charset="UTF-8" />
             <meta name="keywords" content="Electro Store Responsive web tem
 
@@ -19,7 +20,7 @@
                 }
             </script>
             <!-- //Meta tag Keywords -->
-
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
             <!-- Custom-Files -->
             <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" type="text/css" media="all" />
             <!-- Bootstrap css -->
@@ -730,7 +731,6 @@
     {% endblock %}
 
     {% block body %} {% endblock %}
-
     <!-- footer -->
     <footer>
         <div class="footer-top-first">
@@ -1003,18 +1003,33 @@
         </script>
         <!-- //end-smooth-scrolling -->
 
+    <!-- smooth-scrolling-of-move-up -->
+    <script>
+        $(document).ready(function () {
+            /*
+            var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };
+            */
+            $().UItoTop({
+                easingType: 'easeOutQuart'
+            });
 
+        });
+    </script>
+    <!-- //smooth-scrolling-of-move-up -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-        <!-- for bootstrap working -->
+    <!-- for bootstrap working -->
         <script src="{{ asset('js/bootstrap.js') }}"></script>
         <!-- //for bootstrap working -->
     <!-- //js-files -->
+{#    <a href="#" id="toTop" style="display: inline;"><span id="toTopHover" style="opacity: 0;"></span>To Top</a>#}
     </body>
     {% block javascripts %}
-        <script
-                src="https://code.jquery.com/jquery-3.4.1.js"
-                integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-                crossorigin="anonymous">
-        </script>
+
     {% endblock %}
 </html>

@@ -2,7 +2,7 @@
 
 {% block search %}
     <form class="form-inline" name="search" action="{{ path('product') }}" method="post">
-        <input name="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+        <input name="searchText" id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
         <button class="btn my-2 my-sm-0" type="submit" id="searchButton">Search</button>
     </form>
 {% endblock  %}
@@ -118,7 +118,7 @@
                         <div class="col-md-4 product-men mt-5">
             <div class="men-pro-item simpleCart_shelfItem">
                 <div class="men-thumb-item text-center">
-                    <img src="{{ asset('images/') }}{{ value.name }}" style="height:200px; width: inherit"  alt="">
+                    <img src="{{ asset('images/uploads/' ~ value.productImage)  | imagine_filter('squared_thumbnail_small')  }}" alt="">
                     <div class="men-cart-pro">
                         <div class="inner-men-cart-pro">
                             <a href="{{ path('detail',{'id':value.id}) }}" class="link-product-add-cart">Quick View</a>
@@ -131,7 +131,6 @@
                     </h4>
                     <div class="info-product-price my-2">
                         <span class="item_price">Rs.{{ value.price }}</span>
-{#                        <del>Rs.{{ product.price + 1500 }}</del>#}
                     </div>
                     <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
                         <form action="{{ path('addtocart') }}" method="post" name="product">
@@ -163,7 +162,7 @@
                     <div class="col-md-4 product-men mt-5">
                         <div class="men-pro-item simpleCart_shelfItem">
                             <div class="men-thumb-item text-center">
-                                <img src="{{ asset('images/') }}{{ value.name }}" style="height:210px" alt="">
+                                <img src="{{ asset('images/uploads/' ~ value.productImage)  | imagine_filter('squared_thumbnail_small')  }}" alt="">
                                 <div class="men-cart-pro">
                                     <div class="inner-men-cart-pro">
                                         <a href="{{ path('detail',{'id':value.id}) }}" class="link-product-add-cart">Quick View</a>
@@ -176,7 +175,6 @@
                                 </h4>
                                 <div class="info-product-price my-2">
                                     <span class="item_price">Rs.{{ value.price }}</span>
-                                    {#                        <del>Rs.{{ product.price + 1500 }}</del>#}
                                 </div>
                                 <div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
                                     <form action="{{ path('addtocart') }}" method="post" name="product">
@@ -244,4 +242,54 @@
         {% endfor %}
     </ul>
 
+{% endblock %}
+
+{% block javascripts %}
+<!-- start-smooth-scrolling -->
+<script src="{{asset('js/move-top.js')}}"></script>
+<script src="{{ asset('js/easing.js') }}"></script>
+<script>
+    jQuery(document).ready(function ($) {
+        $(".scroll").click(function (event) {
+            event.preventDefault();
+
+            $('html,body').animate({
+                scrollTop: $(this.hash).offset().top
+            }, 1000);
+        });
+    });
+</script>
+<!-- //end-smooth-scrolling -->
+
+<!-- smooth-scrolling-of-move-up -->
+<script>
+    $(document).ready(function () {
+        /*
+        var defaults = {
+            containerID: 'toTop', // fading element id
+            containerHoverID: 'toTopHover', // fading element hover id
+            scrollSpeed: 1200,
+            easingType: 'linear'
+        };
+        */
+        $().UItoTop({
+            easingType: 'easeOutQuart'
+        });
+
+    });
+</script>
+<!-- //smooth-scrolling-of-move-up -->
+    <!--search-box-autocompelte-->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            var product = {{ products|json_encode|raw }};
+            $(function () {
+                $('#searchText').autocomplete({
+                    source: product,
+                });
+            });
+        });
+    </script>
+    <!--//search-box-autocompelte-->
 {% endblock %}

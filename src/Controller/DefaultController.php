@@ -6,8 +6,8 @@ use App\Entity\Address;
 use App\Entity\Answers;
 use App\Entity\Brand;
 use App\Entity\Category;
-use App\Entity\Checker;
 use App\Entity\HomepageSiteSettings;
+use App\Entity\Image;
 use App\Entity\Orders;
 use App\Entity\Page;
 use App\Entity\Product;
@@ -36,6 +36,12 @@ class DefaultController extends AbstractController
         $brands = $em->getRepository(Brand::class)->findAll();
         $categories = $em->getRepository(Category::class)->findAll();
         $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         $homepageSetting = $em->getRepository(HomepageSiteSettings::class)->findAll();
         $pages = $em->getRepository(Page::class)->findAll();
 
@@ -50,6 +56,7 @@ class DefaultController extends AbstractController
             'electronics' => $category,
             'soldoutcheck' => $soldOutCheck,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -75,11 +82,8 @@ class DefaultController extends AbstractController
             {
                 $error = "no such product found";
                 return $this->redirectToRoute('default',['error'=>$error]);
-//                throw new \Exception('no such product found!');
-//                return $this->redirectToRoute('default');
             }
             $categoryAll = $em->getRepository(Category::class)->findAll();
-//            $data = $em->getRepository(Product::class)->findAll();
         }
         else if($slug !== null)
         {
@@ -113,6 +117,12 @@ class DefaultController extends AbstractController
             $categoryAll = $em->getRepository(Category::class)->findAll();
             $data = $em->getRepository(Product::class)->findAll();
         }
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         $soldOutCheck = $em->getRepository(Orders::class)->findWithProduct();
         return $this->render('default/product.html.twig', [
             'categories' => $categories,
@@ -124,6 +134,7 @@ class DefaultController extends AbstractController
             'electronics' => $categoryTwig,
             'searchData' => $searchData,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -138,6 +149,27 @@ class DefaultController extends AbstractController
         }
         $em = $this->getDoctrine()->getManager();
 
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+        $address = new Address();
+
+        $form = $this->createForm(AddressType::class, $address);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $address->setUserId($this->getUser());
+
+            $em->persist($address);
+            $em->flush();
+
+            return $this->redirectToRoute('payment');
+        }
         $pages = $em->getRepository(Page::class)->findAll();
         $categories = $em->getRepository(Category::class)->findAll();
         $brands = $em->getRepository(Brand::class)->findAll();
@@ -198,13 +230,15 @@ class DefaultController extends AbstractController
 //                $orderData = $productRepository->findOneBy(['id'=>$id]);
                 }
 
-            return $this->render('default/cart.html.twig', [
+            return $this->render('default/checkout.html.twig', [
                     'cart' => $cart,
                     'soldoutcheck' => $soldOutCheck,
                     'categories' => $categories,
                     'brands' => $brands,
                     'electronics' => $category,
                     'pages' => $pages,
+                    'checkoutForm' => $form->createView(),
+                    'products'=>$productName,
             ]);
         }
         else {
@@ -235,13 +269,15 @@ class DefaultController extends AbstractController
             $soldOutCheck = $em->getRepository(Orders::class)->findWithProduct();
 //            $orderData = $productRepository->findOneBy(['id'=>$id]);
 
-            return $this->render('default/cart.html.twig', [
+            return $this->render('default/checkout.html.twig', [
                 'cart' => $cart,
                 'soldoutcheck' => $soldOutCheck,
                 'categories' => $categories,
                 'brands' => $brands,
                 'electronics' => $category,
                 'pages' => $pages,
+                'checkoutForm' => $form->createView(),
+                'products' => $productName,
 //                'orderData' => $orderData,
             ]);
             }
@@ -339,11 +375,18 @@ class DefaultController extends AbstractController
         $brands = $em->getRepository(Brand::class)->findAll();
 
         $soldOutCheck = $em->getRepository(Orders::class)->findWithProduct();
+        $image = $em->getRepository(Image::class)->findmainImage($product);
 
         $questionList = $em->getRepository(Questions::class)->findBy(['product'=>$product]);
         $answerList = $em->getRepository(Answers::class)->findAll();
-
-        return $this->render('default/details.html.twig',[
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+        return $this->render('default/single.html.twig',[
             'product' => $product,
             'soldoutcheck' => $soldOutCheck,
             'questionForm' => $questionForm->createView(),
@@ -353,6 +396,8 @@ class DefaultController extends AbstractController
             'brands' => $brands,
             'electronics' => $category,
             'pages' => $pages,
+            'image' => $image,
+            'products' => $productName,
         ]);
     }
 
@@ -388,6 +433,13 @@ class DefaultController extends AbstractController
 
             return $this->redirectToRoute('detail',array('id'=>$id));
         }
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         return $this->render("default/answer.html.twig",[
             'question' => $question,
             'answerForm' => $answerForm->createView(),
@@ -396,11 +448,12 @@ class DefaultController extends AbstractController
             'brands' => $brands,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
     /**
-     * @Route("/shopping-cart/brand/{slug}", name="brand")
+     * @Route("/brand/{slug}", name="brand")
      */
     public function brand(Request $request) : Response
     {
@@ -416,6 +469,13 @@ class DefaultController extends AbstractController
         $products = $em->getRepository(Product::class)->findBy(['brand'=>$brand]);
         $soldOutCheck = $em->getRepository(Orders::class)->findWithProduct();
         $pages = $em->getRepository(Page::class)->findAll();
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         return $this->render('default/brand.html.twig',[
             'categories' => $categories,
             'products' => $products,
@@ -423,6 +483,7 @@ class DefaultController extends AbstractController
             'brands' => $brands,
             'electronics' => $category,
             'pages' => $pages,
+            'productsearch' => $productName,
         ]);
     }
 
@@ -436,10 +497,18 @@ class DefaultController extends AbstractController
 
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         return $this->render('default/about.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -452,11 +521,19 @@ class DefaultController extends AbstractController
         $pages = $em->getRepository(Page::class)->findAll();
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
 
         return $this->render('default/contact.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -470,6 +547,12 @@ class DefaultController extends AbstractController
         $brands = $em->getRepository(Brand::class)->findAll();
         $categories = $em->getRepository(Category::class)->findAll();
         $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
         $homepageSetting = $em->getRepository(HomepageSiteSettings::class)->findAll();
 
         $category = $em->getRepository(Category::class)->findbycategory();
@@ -483,11 +566,12 @@ class DefaultController extends AbstractController
             'electronics' => $category,
             'soldoutcheck' => $soldOutCheck,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
     /**
-     * @Route("/page/{slug}", name="page")
+     * @Route("/{slug}", name="page")
      */
     public function pages(Request $request) : Response
     {
@@ -500,11 +584,20 @@ class DefaultController extends AbstractController
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
-        return $this->render('default/pages.html.twig',[
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
+        return $this->render('default/'.$slug.'.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'page' => $page,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -520,10 +613,19 @@ class DefaultController extends AbstractController
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
         return $this->render('default/faqs.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -539,10 +641,19 @@ class DefaultController extends AbstractController
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
         return $this->render('default/help.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 
@@ -558,13 +669,21 @@ class DefaultController extends AbstractController
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
         return $this->render('default/terms.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
         ]);
     }
-
 
     /**
      * @Route("/privacy-policy", name="privacy")
@@ -572,15 +691,52 @@ class DefaultController extends AbstractController
     public function privacy()
     {
         $em = $this->getDoctrine()->getManager();
+
         $pages = $em->getRepository(Page::class)->findAll();
 
         $categories = $em->getRepository(Category::class)->findAll();
         $category = $em->getRepository(Category::class)->findbycategory();
 
-        return $this->render('default/privacy.html.twig',[
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
+        return $this->render('privacy-policy.html.twig',[
             'categories' => $categories,
             'electronics' => $category,
             'pages' => $pages,
+            'products' => $productName,
+        ]);
+    }
+
+    /**
+     * @Route("/payment", name="payment")
+     */
+    public function payment()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $pages = $em->getRepository(Page::class)->findAll();
+
+        $categories = $em->getRepository(Category::class)->findAll();
+        $category = $em->getRepository(Category::class)->findbycategory();
+
+        $data = $em->getRepository(Product::class)->findAll();
+        $productName = array();
+        foreach ($data as $k=>$v)
+        {
+            $productDesc = array($v->getDescription());
+            $productName = array_merge($productName,$productDesc);
+        }
+
+        return $this->render('default/payment.html.twig',[
+            'categories' => $categories,
+            'electronics' => $category,
+            'pages' => $pages,
+            'products' => $productName,
         ]);
     }
 }

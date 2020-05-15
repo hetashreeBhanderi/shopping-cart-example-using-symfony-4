@@ -296,7 +296,7 @@ html[xmlns] .flexslider .slides {
 }
 
 @media(max-width: 480px) {
-  .flexslider {
+  . flexslider {
     margin: 0 0 40px;
   }
 }
